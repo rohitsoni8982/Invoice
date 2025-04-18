@@ -79,7 +79,7 @@ const ProductForm = () => {
                             value={productDetails.gst}
                             onChange={handleChange}
                             className="border border-gray-300 rounded px-4 py-2 w-full"
-                            placeholder="Enter gst"
+                            placeholder="Enter GST"
                         />
                     </div>
                     <div>
