@@ -48,8 +48,16 @@ const styles = StyleSheet.create({
   tableRow: {
     flexDirection: 'row',
   },
-  tableCol: {
-    width: '14.28%', // Distribute width evenly
+  tableColSer: {
+    width: '10', // Distribute width evenly
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 5,
+    textAlign: 'center',
+  },
+  tableColitem: {
+    width: '20', // Distribute width evenly
     borderStyle: 'solid',
     borderWidth: 1,
     borderColor: '#ccc',
@@ -150,6 +158,12 @@ const styles = StyleSheet.create({
     border: '1 solid #000',
     marginTop: 10,
   },
+  tax: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    textAlign: 'left',
+    marginBottom: 10,
+  },
 });
 
 const InvoicePDF = ({ invoiceData }) => {
@@ -165,6 +179,9 @@ const InvoicePDF = ({ invoiceData }) => {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
+      <View> 
+        <Text style={styles.tax}>TAX INVOICE</Text>
+      </View>
         <View style={styles.container}>
           {/* Header */}
           <View style={styles.section_box}>
@@ -176,10 +193,10 @@ const InvoicePDF = ({ invoiceData }) => {
                     <Image style={styles.logo} src={logo} />
                   </View>
                   <View style={styles.section_company}>
-                    <Text style={styles.title}>MG Traders</Text>
+                    <Text style={styles.title}>{invoiceData.companyName}</Text>
                     <Text style={styles.subtitle}>{invoiceData.companyAddress}</Text>
-                    <Text style={styles.subtitle}>GSTIN: 23AIPCP1582E1ZN</Text>
-                    <Text style={styles.subtitle}>Mobile: 9303450422</Text>
+                    <Text style={styles.subtitle}>GSTIN: {invoiceData.gstNumber}</Text>
+                    <Text style={styles.subtitle}>Mobile: {invoiceData.companyMobile}</Text>
                   </View>
                 </View>
               </View>
@@ -209,12 +226,13 @@ const InvoicePDF = ({ invoiceData }) => {
 
               <View style={styles.customer_section}>
                 <View>
-                  <Text style={styles.text}>Bill To:</Text>
-                  <Text style={styles.text}>{invoiceData.billing_name}</Text>
+                  <Text style={styles.text}>Bill To: {invoiceData.billing_name}</Text>
                 </View>
                 <View>
-                  <Text style={styles.text}>Mobile:</Text>
-                  <Text style={styles.text}>{invoiceData.billing_phone_number}</Text>
+                  <Text style={styles.text}>GST:{invoiceData.billing_gst_number}</Text>
+                </View>
+                <View>
+                  <Text style={styles.text}>Mobile:{invoiceData.billing_phone_number}</Text>
                 </View>
               </View>
 
@@ -230,23 +248,21 @@ const InvoicePDF = ({ invoiceData }) => {
             <View style={styles.table}>
               {/* Table Header */}
               <View style={[styles.tableRow, { backgroundColor: '#f0f0f0' }]}>
-                <View style={styles.tableCol}><Text style={styles.tableCell}>Sr No</Text></View>
+                <View style={styles.tableColSer}><Text style={styles.tableCell}>Sr No</Text></View>
                 <View style={styles.tableCol}><Text style={styles.tableCell}>Item</Text></View>
                 <View style={styles.tableCol}><Text style={styles.tableCell}>HSN</Text></View>
                 <View style={styles.tableCol}><Text style={styles.tableCell}>Rate</Text></View>
                 <View style={styles.tableCol}><Text style={styles.tableCell}>Quantity</Text></View>
-                <View style={styles.tableCol}><Text style={styles.tableCell}>Tax (%)</Text></View>
-                <View style={styles.tableCol}><Text style={styles.tableCell}>Amount</Text></View>
+                <View style={styles.tableCol}><Text style={styles.tableCell}>GST (%)</Text></View>
+                <View style={styles.tableCol}><Text style={styles.tableCell}>Amount (Incl. GST)</Text></View>
               </View>
 
               {/* Table Rows */}
               {invoiceData.items.map((item, index) => {
-                const price = parseFloat(item.price) || 0;
-                const quantity = parseInt(item.quantity, 10) || 0;
-                const tax = parseFloat(item.tax) || 0;
-
-                const amount = (price * quantity) + (price * quantity * (tax / 100));
-
+                let price = parseFloat(item.price) || 0;
+                let quantity = parseInt(item.quantity, 10) || 0;
+                let gst = parseFloat(item.tax) || 0;
+                let amount = (price * quantity) * (1 + gst / 100);                
                 return (
                   <View style={styles.tableRow} key={index}>
                     <View style={styles.tableCol}><Text style={styles.tableCell}>{index + 1}</Text></View>
@@ -254,7 +270,7 @@ const InvoicePDF = ({ invoiceData }) => {
                     <View style={styles.tableCol}><Text style={styles.tableCell}>{item.hsn || '-'}</Text></View>
                     <View style={styles.tableCol}><Text style={styles.tableCell}>{price.toFixed(2)}</Text></View>
                     <View style={styles.tableCol}><Text style={styles.tableCell}>{quantity}</Text></View>
-                    <View style={styles.tableCol}><Text style={styles.tableCell}>{tax}%</Text></View>
+                    <View style={styles.tableCol}><Text style={styles.tableCell}>{gst}%</Text></View>
                     <View style={styles.tableCol}><Text style={styles.tableCell}>{amount.toFixed(2)}</Text></View>
                   </View>
                 );
@@ -271,90 +287,22 @@ const InvoicePDF = ({ invoiceData }) => {
               </View>
             </View>
           </View>
-
-          {/* Footer */}
-          {/* <View style={styles.footer}>
-            <Text style={styles.footerText}>Thank you for your business!</Text>
-          </View> */}
         </View>
-        
-        {/* GST Items Table
-        <View style={styles.GST_section}>
-            <View style={styles.table}>
-              <View style={styles.tableRow}>
-                <View style={styles.tableCol}>
-                  <Text style={styles.tableCell}>HSN/SAC</Text>
-                </View>
-                <View style={styles.tableCol}>
-                  <Text style={styles.tableCell}>Taxable Value</Text>
-                </View>
-                <View style={styles.tableCol}>
-                  <Text style={styles.tableCell}>CGST</Text>
-                  <View style={[styles.displayFlex ,{flexDirection: 'row'},{justifyContent: 'space-between'}]}>
-                    <Text style={styles.tableCell}>Rate</Text>
-                    <Text style={styles.tableCell}>Amount</Text>
-                  </View>
-                </View>
-                <View style={styles.tableCol}>
-                  <Text style={styles.tableCell}>SCGST</Text>
-                  <View style={[styles.displayFlex , {flexDirection: 'row'},{justifyContent: 'space-between'}]}>
-                    <Text style={styles.tableCell}>Rate</Text>
-                    <Text style={styles.tableCell}>Amount</Text>
-                  </View>
-                </View>
-                <View style={styles.tableCol}>
-                  <Text style={styles.tableCell}>Total Tax Amount</Text>
-                </View>
-              </View>
 
-              {invoiceData.items.map((item, index) => {
-                const price = parseFloat(item.price) || 0;
-                const quantity = parseInt(item.quantity, 10) || 0;
-                const tax = parseFloat(item.tax) || 0;
-
-                const amount = (price * quantity) + (price * quantity * (tax / 100));
-
-                return (
-                  <View style={styles.tableRow} key={index}>
-                    <View style={styles.tableCol}>
-                      <Text style={styles.tableCell}>{item + 1}</Text>
-                    </View>
-                    <View style={styles.tableCol}>
-                      <Text style={styles.tableCell}>{item.name}</Text>
-                    </View>
-                    <View style={styles.tableCol}>
-                      <Text style={styles.tableCell}>{item.hsn || '-'}</Text>
-                    </View>
-                    <View style={styles.tableCol}>
-                      <Text style={styles.tableCell}>{price.toFixed(2)}</Text>
-                    </View>
-                    <View style={styles.tableCol}>
-                      <Text style={styles.tableCell}>{quantity}</Text>
-                    </View>
-                    <View style={styles.tableCol}>
-                      <Text style={styles.tableCell}>{tax}%</Text>
-                    </View>
-                    <View style={styles.tableCol}>
-                      <Text style={styles.tableCell}>{amount.toFixed(2)}</Text>
-                    </View>
-                  </View>
-                );
-              })}
-            </View>
-            </View> */}
-
-                  {/* GST Items Table */}
+          {/* GST Items Table */}
           <View style={styles.GST_section}>
             <View style={styles.table}>
               {/* Table Header */}
               <View style={styles.tableRow}>
                 <View style={styles.tableCol}><Text style={styles.tableCell}>HSN/SAC</Text></View>
-                <View style={styles.tableCol}><Text style={styles.tableCell}>Taxable Value</Text></View>
+                <View style={styles.tableCol}><Text style={styles.tableCell}>Taxable Value (Exc. GST)</Text></View>
                 <View style={styles.tableCol}><Text style={styles.tableCell}>CGST Rate</Text></View>
                 <View style={styles.tableCol}><Text style={styles.tableCell}>CGST Amount</Text></View>
                 <View style={styles.tableCol}><Text style={styles.tableCell}>SGST Rate</Text></View>
                 <View style={styles.tableCol}><Text style={styles.tableCell}>SGST Amount</Text></View>
-                <View style={styles.tableCol}><Text style={styles.tableCell}>Total Tax Amount</Text></View>
+                <View style={styles.tableCol}><Text style={styles.tableCell}>IGST Rate</Text></View>
+                <View style={styles.tableCol}><Text style={styles.tableCell}>IGST Amount</Text></View>
+                <View style={styles.tableCol}><Text style={styles.tableCell}>Total GST Amount</Text></View>
               </View>
 
               {/* Table Rows */}
@@ -364,8 +312,10 @@ const InvoicePDF = ({ invoiceData }) => {
                 const tax = parseFloat(item.tax) || 0;
                 const cgstRate = (tax / 2).toFixed(2);
                 const sgstRate = (tax / 2).toFixed(2);
+                const igstRate = 0;
                 const cgstAmount = ((price * quantity) * (cgstRate / 100)).toFixed(2);
                 const sgstAmount = ((price * quantity) * (sgstRate / 100)).toFixed(2);
+                const igstAmount = 0;
                 const totalTaxAmount = (parseFloat(cgstAmount) + parseFloat(sgstAmount)).toFixed(2);
 
                 return (
@@ -376,6 +326,8 @@ const InvoicePDF = ({ invoiceData }) => {
                     <View style={styles.tableCol}><Text style={styles.tableCell}>{cgstAmount}</Text></View>
                     <View style={styles.tableCol}><Text style={styles.tableCell}>{sgstRate}%</Text></View>
                     <View style={styles.tableCol}><Text style={styles.tableCell}>{sgstAmount}</Text></View>
+                    <View style={styles.tableCol}><Text style={styles.tableCell}>{igstRate}%</Text></View>
+                    <View style={styles.tableCol}><Text style={styles.tableCell}>{igstAmount}</Text></View>
                     <View style={styles.tableCol}><Text style={styles.tableCell}>{totalTaxAmount}</Text></View>
                   </View>
                 );
@@ -393,14 +345,14 @@ const InvoicePDF = ({ invoiceData }) => {
         <View style={styles.bankDetailsSection}>
           <View style={styles.bankDetails}>
             <Text style={styles.text}>Bank Details</Text>
-            <Text style={styles.text}>Name: Mahakaal Traders</Text>
-            <Text style={styles.text}>IFSC Code: HDFC0000475</Text>
-            <Text style={styles.text}>Account No: 50200051510016</Text>
-            <Text style={styles.text}>Bank: HDFC Bank, RATLAM-MADHYA PRADESH</Text>
+            <Text style={styles.text}>Name: MG Traders</Text>
+            <Text style={styles.text}>IFSC Code: CNRB0005984</Text>
+            <Text style={styles.text}>Account No: 110005366346</Text>
+            <Text style={styles.text}>Bank: CANARA BANK INDORE KESAR BAGH ROAD</Text>
           </View>
           <View style={styles.signature}>
             <Text style={styles.text}>Authorised Signatory For</Text>
-            <Text style={styles.text}>Mahakaal Traders</Text>
+            <Text style={styles.text}>MG Traders</Text>
           </View>
         </View>
       </Page>

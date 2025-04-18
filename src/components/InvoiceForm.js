@@ -3,26 +3,32 @@ import { PDFDownloadLink } from '@react-pdf/renderer';
 import InvoicePDF from "./pdf";
 import { useEffect } from "react";
 import axios from "axios";
+import NavePage from "./nav";
+
 const InvoiceForm = () => {
-  const [gstNumber] = useState("1234567890");
-  const [companyName] = useState("MG");
-  const [companyAddress] = useState("1234 Your Street, Your City, Your State, 123456");
-  const [companyState] = useState("Your State");
-  const [companyCity] = useState("Your City");
-  const [companyPinCode] = useState("123456");
-  const [companyMobile] = useState("1234567890");
+  const [gstNumber] = useState("23HNNPS0665E1ZR");
+  const [companyName] = useState("MG Traders");
+  const [companyAddress] = useState("76, Ambika Puri Extension, Indore, MP");
+  const [companyState] = useState("Madhya Pradesh");
+  const [companyCity] = useState("Indore");
+  const [companyPinCode] = useState("452005");
+  const [companyMobile] = useState("9981230516");
   const [invoice_to_date, setInvoice_To_Date] = useState("");
   const [invoice_from_date, setInvoice_From_Date] = useState("");
   const [billing_name, setBilling_Name] = useState("");
   const [billing_phone_number, setBilling_Phone_Number] = useState("");
   const [billing_address, setBilling_Address] = useState("");
-  const [items, setItems] = useState([{ name: "", price: "", quantity: "" }]);
+  const [billing_gst_number, setBilling_Gst_Number] = useState("");
+  const [items, setItems] = useState([{ name: "", price: "", quantity: "" , tax: "", hsn: "" }]);
   const [invoiceData, setInvoiceData] = useState(null);
   const [invoice_number , setInvoice_Number] = useState("");
+  const [product_list , setProduct_List] = useState("");
+  const [error, setError] = useState('');
+  
 
   // Add new item
   const handleAddItem = () => {
-    setItems([...items, { name: "", price: "", quantity: 1 }]);
+    setItems([...items, { name: "", price: "", quantity: "", tax: "", hsn: "" }]);
   };
 
   // Remove an item
@@ -35,6 +41,15 @@ const InvoiceForm = () => {
   const handleItemChange = (index, field, value) => {
     const newItems = [...items];
     newItems[index][field] = value;
+  
+    // If the field is "name", auto-set the tax and hsn values
+    if (field === "name") {
+      const selectedProduct = product_list.find(product => product.name === value);
+      if (selectedProduct) {
+        newItems[index].tax = selectedProduct.tax; // Set tax from product_list
+        newItems[index].hsn = selectedProduct.hsn; // Set HSN from product_list
+      }
+    }
     setItems(newItems);
   };
 
@@ -53,19 +68,83 @@ const InvoiceForm = () => {
       billing_name,
       billing_phone_number,
       billing_address,
+      billing_gst_number,
       items,
       invoice_number,
     };
     setInvoiceData(invoiceData);
   };
   
+    useEffect(() => {
+      axios.get('http://127.0.0.1:8000/last_invoice') // Replace with your API URL
+        .then(response => {
+          const data = response.data;
+  
+          // Check if invoice_number is present
+          if (data.invoice_number) {
+            setInvoice_Number(data.invoice_number);
+            setError(''); // Clear any previous errors
+          } else {
+            setError('Invoice number is missing from the response.');
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching API:', error);
+          setError('Failed to fetch invoice number from the server.');
+        });
+    }, []);
+    
+
   useEffect(() => {
-    axios.get(' http://127.0.0.1:8000/last_invoice') // Replace with your API URL
-      .then(response => setInvoice_Number(response.data.invoice_number))
-      .catch(error => console.error('Error fetching API:', error));
+    axios.get('http://127.0.0.1:8000/product_list') // Replace with your API URL
+      .then(response => setProduct_List(response.data)) // Assuming response.data is a list of products
+      .catch(error => console.error('Error fetching product list:', error));
   }, []);
 
   const handleGenerateInvoice = () => {
+    
+    // if (!invoice_number) {
+    //   setError('Invoice number is required.');
+    //   return;
+    // }
+
+    // if (!invoice_from_date) {
+    //   setError('Invoice from date is required.');
+    //   return;
+    // }
+
+    // if (!invoice_to_date) {
+    //   setError('Invoice to date is required.');
+    //   return;
+    // }
+
+    // if (!billing_name) {
+    //   setError('Billing name is required.');
+    //   return;
+    // }
+
+    // if (!billing_phone_number) {
+    //   setError('Billing phone number is required.');
+    //   return;
+    // }
+
+    // if (!billing_address) {
+    //   setError('Billing address is required.');
+    //   return;
+    // }
+
+    // if (!billing_gst_number) {
+    //   setError('Billing GST number is required.');
+    //   return;
+    // }
+
+    // if (!items || items.length === 0) {
+    //   setError('At least one item is required.');
+    //   return;
+    // }
+
+    setError(''); // Clear error if all fields are valid
+
     const invoiceDatasend = {
       invoice_to_date,
       invoice_from_date,
@@ -73,6 +152,7 @@ const InvoiceForm = () => {
       billing_name,
       billing_phone_number,
       billing_address,
+      billing_gst_number,
       items,
     };
     axios.post('http://127.0.0.1:8000/add_card', invoiceDatasend)
@@ -86,74 +166,13 @@ const InvoiceForm = () => {
   };
 
   return (
+    <div>
+      <NavePage></NavePage>
     <form
       onSubmit={handleSubmit}
       className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-8 mt-10"
     >
       <h2 className="text-3xl font-bold mb-6 text-gray-800">Invoice Generator</h2>
-
-      {/* Company Details Section
-      <div className="mb-8">
-        <h3 className="text-xl font-semibold text-gray-700 mb-4">Company Details</h3>
-        <div className="grid grid-cols-2 gap-6">
-          <input
-            type="text"
-            placeholder="GST Number"
-            value={gstNumber}
-            onChange={(e) => setGstNumber(e.target.value)}
-            className="p-3 border rounded-md w-full"
-            required
-          />
-          <input
-            type="text"
-            placeholder="Company Name"
-            value={companyName}
-            onChange={(e) => setCompanyName(e.target.value)}
-            className="p-3 border rounded-md w-full"
-            required
-          />
-          <input
-            type="text"
-            placeholder="Company Address"
-            value={companyAddress}
-            onChange={(e) => setCompanyAddress(e.target.value)}
-            className="p-3 border rounded-md w-full"
-            required
-          />
-          <input
-            type="text"
-            placeholder="State"
-            value={companyState}
-            onChange={(e) => setCompanyState(e.target.value)}
-            className="p-3 border rounded-md w-full"
-            required
-          />
-          <input
-            type="text"
-            placeholder="City"
-            value={companyCity}
-            onChange={(e) => setCompanyCity(e.target.value)}
-            className="p-3 border rounded-md w-full"
-            required
-          />
-          <input
-            type="text"
-            placeholder="Pin Code"
-            value={companyPinCode}
-            onChange={(e) => setCompanyPinCode(e.target.value)}
-            className="p-3 border rounded-md w-full"
-            required
-          />
-          <input
-            type="tel"
-            placeholder="Mobile Number"
-            value={companyMobile}
-            onChange={(e) => setCompanyMobile(e.target.value)}
-            className="p-3 border rounded-md w-full"
-            required
-          />
-        </div>
-      </div> */}
 
       {/* Invoice Details */}
       <div className="mb-8">
@@ -204,6 +223,14 @@ const InvoiceForm = () => {
             className="p-3 border rounded-md w-full"
             required
           />
+          <input
+            type="text"
+            placeholder="GST Number"
+            value={billing_gst_number}
+            onChange={(e) => setBilling_Gst_Number(e.target.value)}
+            className="p-3 border rounded-md w-full"
+            required
+          />
         </div>
       </div>
 
@@ -219,9 +246,9 @@ const InvoiceForm = () => {
               required
             >
               <option value="">Select Item</option>
-              <option value="Item 1">Item 1</option>
-              <option value="Item 2">Item 2</option>
-              <option value="Item 3">Item 3</option>
+              {product_list && product_list.map((product, i) => (
+                <option key={i} value={product.name}>{product.name}</option>
+              ))}
             </select>
             <input
               type="number"
@@ -264,6 +291,12 @@ const InvoiceForm = () => {
         <p className="text-gray-600">Invoice Number: {invoice_number}</p>
       </div>
 
+      {error && (
+        <div style={{ color: 'red', marginBottom: '10px' }}>
+          {error}
+        </div>
+      )}
+
       <button
         type="submit"
         className="w-full bg-green-500 hover:bg-green-600 text-white py-3 px-6 rounded-md"
@@ -275,13 +308,20 @@ const InvoiceForm = () => {
       {invoiceData && (
         <PDFDownloadLink
           document={<InvoicePDF invoiceData={invoiceData} />}
-          fileName={`invoice_${invoiceData.invoiceNumber}.pdf`}
+          fileName={`invoice_${invoice_number}.pdf`}
           className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 px-6 rounded-md mt-4 text-center"
+          onClick={() => {
+            // Reload the page after the download
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000); // Add a slight delay to ensure the download starts before reload
+          }}
         >
           {({ loading }) => (loading ? 'Loading document...' : 'Download Invoice')}
         </PDFDownloadLink>
       )}
     </form>
+    </div>
   );
 };
 
