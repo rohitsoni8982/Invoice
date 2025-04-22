@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 10,
     marginBottom: 10,
-    maxWidth: 160,
+    maxWidth: 220,
     flexWrap: 'wrap',
     paddingLeft: 10,
   },
@@ -48,16 +48,8 @@ const styles = StyleSheet.create({
   tableRow: {
     flexDirection: 'row',
   },
-  tableColSer: {
-    width: '10', // Distribute width evenly
-    borderStyle: 'solid',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 5,
-    textAlign: 'center',
-  },
-  tableColitem: {
-    width: '20', // Distribute width evenly
+  tableCol: {
+    width: '14.28%', // Distribute width evenly
     borderStyle: 'solid',
     borderWidth: 1,
     borderColor: '#ccc',
@@ -133,7 +125,7 @@ const styles = StyleSheet.create({
   },
   bill_address: {
     fontSize: 10,
-    maxWidth: 160,
+    maxWidth: 240,
     flexWrap: 'wrap',
   },
   totalAmountSection: {
@@ -248,7 +240,7 @@ const InvoicePDF = ({ invoiceData }) => {
             <View style={styles.table}>
               {/* Table Header */}
               <View style={[styles.tableRow, { backgroundColor: '#f0f0f0' }]}>
-                <View style={styles.tableColSer}><Text style={styles.tableCell}>Sr No</Text></View>
+                <View style={styles.tableCol}><Text style={styles.tableCell}>Sr No</Text></View>
                 <View style={styles.tableCol}><Text style={styles.tableCell}>Item</Text></View>
                 <View style={styles.tableCol}><Text style={styles.tableCell}>HSN</Text></View>
                 <View style={styles.tableCol}><Text style={styles.tableCell}>Rate</Text></View>
