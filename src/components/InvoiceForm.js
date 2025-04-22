@@ -76,7 +76,7 @@ const InvoiceForm = () => {
   };
   
     useEffect(() => {
-      axios.get('http://127.0.0.1:8000/last_invoice') // Replace with your API URL
+      axios.get('https://invoicebackend-rwos.onrender.com/last_invoice') // Replace with your API URL
         .then(response => {
           const data = response.data;
   
@@ -96,52 +96,52 @@ const InvoiceForm = () => {
     
 
   useEffect(() => {
-    axios.get('http://127.0.0.1:8000/product_list') // Replace with your API URL
+    axios.get('https://invoicebackend-rwos.onrender.com/product_list') // Replace with your API URL
       .then(response => setProduct_List(response.data)) // Assuming response.data is a list of products
       .catch(error => console.error('Error fetching product list:', error));
   }, []);
 
   const handleGenerateInvoice = () => {
     
-    // if (!invoice_number) {
-    //   setError('Invoice number is required.');
-    //   return;
-    // }
+    if (!invoice_number) {
+      setError('Invoice number is required.');
+      return;
+    }
 
-    // if (!invoice_from_date) {
-    //   setError('Invoice from date is required.');
-    //   return;
-    // }
+    if (!invoice_from_date) {
+      setError('Invoice from date is required.');
+      return;
+    }
 
-    // if (!invoice_to_date) {
-    //   setError('Invoice to date is required.');
-    //   return;
-    // }
+    if (!invoice_to_date) {
+      setError('Invoice to date is required.');
+      return;
+    }
 
-    // if (!billing_name) {
-    //   setError('Billing name is required.');
-    //   return;
-    // }
+    if (!billing_name) {
+      setError('Billing name is required.');
+      return;
+    }
 
-    // if (!billing_phone_number) {
-    //   setError('Billing phone number is required.');
-    //   return;
-    // }
+    if (!billing_phone_number) {
+      setError('Billing phone number is required.');
+      return;
+    }
 
-    // if (!billing_address) {
-    //   setError('Billing address is required.');
-    //   return;
-    // }
+    if (!billing_address) {
+      setError('Billing address is required.');
+      return;
+    }
 
-    // if (!billing_gst_number) {
-    //   setError('Billing GST number is required.');
-    //   return;
-    // }
+    if (!billing_gst_number) {
+      setError('Billing GST number is required.');
+      return;
+    }
 
-    // if (!items || items.length === 0) {
-    //   setError('At least one item is required.');
-    //   return;
-    // }
+    if (!items || items.length === 0) {
+      setError('At least one item is required.');
+      return;
+    }
 
     setError(''); // Clear error if all fields are valid
 
@@ -155,7 +155,7 @@ const InvoiceForm = () => {
       billing_gst_number,
       items,
     };
-    axios.post('http://127.0.0.1:8000/add_card', invoiceDatasend)
+    axios.post('https://invoicebackend-rwos.onrender.com/add_card', invoiceDatasend)
       .then(response => {
         console.log('Invoice saved:', response.data);
         // You can show a success message or redirect here

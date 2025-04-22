@@ -11,7 +11,7 @@ const ProductList = () => {
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
-        const response = await fetch(' http://127.0.0.1:8000/product_list'); // Replace with your API endpoint
+        const response = await fetch(' https://invoicebackend-rwos.onrender.com/product_list'); // Replace with your API endpoint
         const data = await response.json();
         setInvoices(data);
         setLoading('');
@@ -30,11 +30,7 @@ const ProductList = () => {
   const columns = [
     { field: 'name', headerName: 'Product Name', width: 200 },
     { field: 'hsn', headerName: 'HSN Number', width: 150 },
-    { field: 'cgst_rate', headerName: 'CGST Rate (%)', width: 150 },
-    { field: 'cgst_amount', headerName: 'CGST Amount', width: 150 },
-    { field: 'sgst_rate', headerName: 'SGST Rate (%)', width: 150 },
-    { field: 'sgst_amount', headerName: 'SGST Amount', width: 150 },
-    { field: 'taxable_value', headerName: 'Taxable Value', width: 200 },
+    { field: 'tax', headerName: 'GST(%)', width: 150 },
 ];
 
   return (
