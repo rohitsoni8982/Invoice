@@ -6,6 +6,7 @@ import InvoiceForm from "./components/InvoiceForm";
 import InvoiceList from "./components/Invoice_list";
 import ProductForm from "./components/product";
 import ProductList from "./components/product_list";
+import InvoiceDetails from "./components/InvoiceDetails";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Routes>
           <Route path='/' element={<InvoiceForm />} />
           <Route path='/invoice_list' element={<InvoiceList />} />
+          <Route path="/invoice_detail/:invoice_number" element={<InvoiceDetails />} />
           <Route path='/product' element={<ProductForm />} />
           <Route path='/product_list' element={<ProductList />} />
         </Routes>

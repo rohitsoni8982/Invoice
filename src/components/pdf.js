@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   section: {
-    marginBottom: 10,
+    marginBottom: 0,
   },
   text: {
     marginBottom: 5,
@@ -42,13 +42,77 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     borderWidth: 1,
     borderColor: '#ccc',
-    marginBottom: 10,
-    marginTop: 10,
+    // marginBottom: 10,
+    // marginTop: 10,
   },
   tableRow: {
     flexDirection: 'row',
   },
   tableCol: {
+    width: '5.28%', // Distribute width evenly
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 5,
+    textAlign: 'center',
+  },
+  tableColSrNo: {
+    width: '5.28%', // Distribute width evenly
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 5,
+    textAlign: 'center',
+  },
+  tableColItm: {
+    width: '35.28%', // Distribute width evenly
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 5,
+    textAlign: 'center',
+  },
+  tableColHsn: {
+    width: '14.28%', // Distribute width evenly
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 5,
+    textAlign: 'center',
+  },
+  tableColRat: {
+    width: '12.28%', // Distribute width evenly
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 5,
+    textAlign: 'center',
+  },
+  tableColtaxval: {
+    width: '14.28%', // Distribute width evenly
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 5,
+    textAlign: 'center',
+  },
+  tableColQut: {
+    width: '10.28%', // Distribute width evenly
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 5,
+    textAlign: 'center',
+  },
+  tableColGst: {
+    width: '10.28%', // Distribute width evenly
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 5,
+    textAlign: 'center',
+  },
+  tableColAmt: {
     width: '14.28%', // Distribute width evenly
     borderStyle: 'solid',
     borderWidth: 1,
@@ -57,7 +121,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   tableCell: {
-    fontSize: 10,
+    fontSize: 8,
   },
   totalRow: {
     fontWeight: 'bold',
@@ -162,11 +226,18 @@ const InvoicePDF = ({ invoiceData }) => {
   const totalAmount = invoiceData.items.reduce((acc, item) => {
     const price = parseFloat(item.price) || 0;
     const quantity = parseInt(item.quantity, 10) || 0;
-    const tax = parseFloat(item.tax) || 0;
+    const tax = parseFloat(item.gst) || 0;
 
     const amount = (price * quantity) + (price * quantity * (tax / 100));
     return acc + amount;
   }, 0).toFixed(2);
+
+  {/* Initialize totals */}
+  // let totalRate = 0;
+  let totalCGST = 0;
+  let totalSGST = 0;
+  let totalIGST = 0;
+  let totaltaxableamount = 0;
 
   return (
     <Document>
@@ -236,44 +307,92 @@ const InvoicePDF = ({ invoiceData }) => {
           </View>
 
           {/* Items Table */}
-          <View style={styles.section}>
+          <View>
+          {/* <View style={styles.section}> */}
             <View style={styles.table}>
               {/* Table Header */}
               <View style={[styles.tableRow, { backgroundColor: '#f0f0f0' }]}>
-                <View style={styles.tableCol}><Text style={styles.tableCell}>Sr No</Text></View>
-                <View style={styles.tableCol}><Text style={styles.tableCell}>Item</Text></View>
-                <View style={styles.tableCol}><Text style={styles.tableCell}>HSN</Text></View>
-                <View style={styles.tableCol}><Text style={styles.tableCell}>Rate</Text></View>
-                <View style={styles.tableCol}><Text style={styles.tableCell}>Quantity</Text></View>
-                <View style={styles.tableCol}><Text style={styles.tableCell}>GST (%)</Text></View>
-                <View style={styles.tableCol}><Text style={styles.tableCell}>Amount (Incl. GST)</Text></View>
+                <View style={styles.tableColSrNo}><Text style={styles.tableCell}>Sr No</Text></View>
+                <View style={styles.tableColItm}><Text style={styles.tableCell}>Item</Text></View>
+                <View style={styles.tableColHsn}><Text style={styles.tableCell}>HSN</Text></View>
+                <View style={styles.tableColRat}><Text style={styles.tableCell}>Rate</Text></View>
+                <View style={styles.tableColQut}><Text style={styles.tableCell}>Quantity</Text></View>
+                <View style={styles.tableColtaxval}><Text style={styles.tableCell}>Taxable Value (Exc. GST)</Text></View>
+                <View style={styles.tableColGst}><Text style={styles.tableCell}>CGST (%)</Text></View>
+                <View style={styles.tableColGst}><Text style={styles.tableCell}>SGST (%)</Text></View>
+                <View style={styles.tableColGst}><Text style={styles.tableCell}>IGST (%)</Text></View>
+                <View style={styles.tableColAmt}><Text style={styles.tableCell}>Amount (Incl. GST)</Text></View>
               </View>
 
               {/* Table Rows */}
               {invoiceData.items.map((item, index) => {
                 let price = parseFloat(item.price) || 0;
                 let quantity = parseInt(item.quantity, 10) || 0;
-                let gst = parseFloat(item.tax) || 0;
-                let amount = (price * quantity) * (1 + gst / 100);                
+                let gst = parseFloat(item.gst) || 0;
+                let amount = (price * quantity) * (1 + gst / 100);
+                let cgst = (gst / 2).toFixed(2);
+                let sgst = (gst / 2).toFixed(2);
+                let igst = 0;
+                let cgstAmount = ((price * quantity) * (cgst / 100)).toFixed(2);
+                let sgstAmount = ((price * quantity) * (sgst / 100)).toFixed(2);
+                let igstAmount = 0;
+                let totalTaxAmount = (parseFloat(cgstAmount) + parseFloat(sgstAmount)).toFixed(2);
+                
+                // Accumulate totals
+                // totalRate += price ;
+                // totalRate += price * quantity;
+                totalCGST += parseFloat(cgstAmount);
+                totalSGST += parseFloat(sgstAmount);
+                totalIGST += parseFloat(igstAmount);
+                totaltaxableamount += parseFloat((price * quantity))
+
                 return (
                   <View style={styles.tableRow} key={index}>
-                    <View style={styles.tableCol}><Text style={styles.tableCell}>{index + 1}</Text></View>
-                    <View style={styles.tableCol}><Text style={styles.tableCell}>{item.name}</Text></View>
-                    <View style={styles.tableCol}><Text style={styles.tableCell}>{item.hsn || '-'}</Text></View>
-                    <View style={styles.tableCol}><Text style={styles.tableCell}>{price.toFixed(2)}</Text></View>
-                    <View style={styles.tableCol}><Text style={styles.tableCell}>{quantity}</Text></View>
-                    <View style={styles.tableCol}><Text style={styles.tableCell}>{gst}%</Text></View>
-                    <View style={styles.tableCol}><Text style={styles.tableCell}>{amount.toFixed(2)}</Text></View>
+                    <View style={styles.tableColSrNo}><Text style={styles.tableCell}>{index + 1}</Text></View>
+                    <View style={styles.tableColItm}><Text style={styles.tableCell}>{item.name}</Text></View>
+                    <View style={styles.tableColHsn}><Text style={styles.tableCell}>{item.hsn || '-'}</Text></View>
+                    <View style={styles.tableColRat}><Text style={styles.tableCell}>{price.toFixed(2)}</Text></View>
+                    <View style={styles.tableColQut}><Text style={styles.tableCell}>{quantity}</Text></View>
+                    <View style={styles.tableColtaxval}><Text style={styles.tableCell}>{quantity*price}</Text></View>
+                    <View style={styles.tableColGst}>
+                      <Text style={styles.tableCell}>{cgstAmount}</Text>
+                      <Text style={[{fontSize:"6"}]}>({cgst}%)</Text>
+                      </View>
+                    <View style={styles.tableColGst}>
+                      <Text style={styles.tableCell}>{sgstAmount}</Text>
+                      <Text style={[{fontSize:"6"}]}>({sgst}%)</Text>
+                      </View>
+                    <View style={styles.tableColGst}>
+                      <Text style={styles.tableCell}>{igstAmount}</Text>
+                      <Text style={[{fontSize:"6"}]}>({igst}%)</Text>
+                      </View>
+                    <View style={styles.tableColAmt}><Text style={styles.tableCell}>{amount.toFixed(2)}</Text></View>
                   </View>
                 );
               })}
 
               {/* Total Row */}
               <View style={[styles.tableRow, styles.totalRow]}>
-                <View style={[styles.tableCol, { width: '85.72%' }]}>
+                <View style={[styles.tableCol, { width: '77.28%' }]}>
+                {/* <View style={[styles.tableCol, { width: '54.28%' }]}> */}
                   <Text style={styles.tableCell}>Total</Text>
                 </View>
-                <View style={styles.tableCol}>
+                {/* <View style={styles.tableColRat}>
+                  <Text style={styles.tableCell}>{totalRate.toFixed(2)}</Text>
+                </View> */}
+                <View style={styles.tableColtaxval}>
+                  <Text style={styles.tableCell}>{totaltaxableamount}</Text>
+                </View>
+                <View style={styles.tableColGst}>
+                  <Text style={styles.tableCell}>{totalCGST.toFixed(2)}</Text>
+                </View>
+                <View style={styles.tableColGst}>
+                  <Text style={styles.tableCell}>{totalSGST.toFixed(2)}</Text>
+                </View>
+                <View style={styles.tableColGst}>
+                  <Text style={styles.tableCell}>{totalIGST.toFixed(2)}</Text>
+                </View>
+                <View style={styles.tableColAmt}>
                   <Text style={styles.tableCell}>{totalAmount}</Text>
                 </View>
               </View>
@@ -282,9 +401,8 @@ const InvoicePDF = ({ invoiceData }) => {
         </View>
 
           {/* GST Items Table */}
-          <View style={styles.GST_section}>
+          {/* <View style={styles.GST_section}>
             <View style={styles.table}>
-              {/* Table Header */}
               <View style={styles.tableRow}>
                 <View style={styles.tableCol}><Text style={styles.tableCell}>HSN/SAC</Text></View>
                 <View style={styles.tableCol}><Text style={styles.tableCell}>Taxable Value (Exc. GST)</Text></View>
@@ -297,11 +415,10 @@ const InvoicePDF = ({ invoiceData }) => {
                 <View style={styles.tableCol}><Text style={styles.tableCell}>Total GST Amount</Text></View>
               </View>
 
-              {/* Table Rows */}
               {invoiceData.items.map((item, index) => {
                 const price = parseFloat(item.price) || 0;
                 const quantity = parseInt(item.quantity, 10) || 0;
-                const tax = parseFloat(item.tax) || 0;
+                const tax = parseFloat(item.gst) || 0;
                 const cgstRate = (tax / 2).toFixed(2);
                 const sgstRate = (tax / 2).toFixed(2);
                 const igstRate = 0;
@@ -325,7 +442,7 @@ const InvoicePDF = ({ invoiceData }) => {
                 );
               })}
             </View>
-          </View>
+          </View> */}
 
         {/* Total Amount in Words */}
         <View style={styles.totalAmountSection}>

@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box } from '@mui/material';
 import NavePage from "./nav";
+import { useNavigate } from 'react-router-dom';
 
 const InvoiceList = () => {
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState('Loading...');
+  const navigate = useNavigate();
 
   // Fetch data (replace with your API endpoint or data source)
   useEffect(() => {
@@ -27,8 +29,41 @@ const InvoiceList = () => {
     fetchInvoices();
   }, []);
 
+  const handleViewDetails = (row) => {
+    const encodedInvoice = encodeURIComponent(row.invoice_number);
+    navigate(`/invoice_detail/${encodedInvoice}`);
+  };
+  
+  const handleDownloadPDF = (row) => {
+    // Trigger the PDF download logic
+    console.log('Downloading PDF for:', row);
+    alert(`Downloading PDF for Invoice Number: ${row.invoice_number}`);
+    // You can integrate your PDF generation logic here
+  };
+
   // Define columns for the grid
   const columns = [
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      width: 200,
+      renderCell: (params) => (
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button
+            onClick={() => handleViewDetails(params.row)}
+            className="text-blue rounded hover:bg-blue-600"
+          >
+            View Details
+          </button>
+          <button
+            onClick={() => handleDownloadPDF(params.row)}
+            className="text-green rounded hover:bg-green-600"
+          >
+            Download PDF
+          </button>
+        </div>
+      ),
+    },
     { field: 'invoice_number', headerName: 'Invoice Number', width: 200 },
     { field: 'billing_name', headerName: 'Billing Name', width: 200 },
     { field: 'billing_address', headerName: 'Billing Address', width: 300 },
@@ -51,7 +86,7 @@ const InvoiceList = () => {
         ))}
       </div>
     ),
-  }, 
+  },
 ];  
 
   return (

@@ -20,8 +20,9 @@ const ProductForm = () => {
         console.log('Product Details:', productDetails);
 
         try {
-            const response = await axios.post('https://your-api-endpoint.com/products', productDetails
-        );
+            const response = await axios.post('http://127.0.0.1:8000/product', productDetails
+            // const response = await axios.post('https://invoicebackend-rwos.onrender.com/products', productDetails
+            );
 
             if (response.status === 200 || response.status === 201) {
                 console.log('Product saved successfully:', response.data);
@@ -53,7 +54,7 @@ const ProductForm = () => {
                         <label className="block font-medium">Product Name</label>
                         <input
                             type="text"
-                            name="productName"
+                            name="name"
                             value={productDetails.name}
                             onChange={handleChange}
                             className="border border-gray-300 rounded px-4 py-2 w-full"
@@ -64,7 +65,7 @@ const ProductForm = () => {
                         <label className="block font-medium">HSN Number</label>
                         <input
                             type="text"
-                            name="hsnNumber"
+                            name="hsn"
                             value={productDetails.hsn}
                             onChange={handleChange}
                             className="border border-gray-300 rounded px-4 py-2 w-full"
@@ -86,7 +87,7 @@ const ProductForm = () => {
                         <label className="block font-medium">Taxable Value</label>
                         <input
                             type="number"
-                            name="taxableValue"
+                            name="taxable_value"
                             value={productDetails.taxable_value}
                             onChange={handleChange}
                             className="border border-gray-300 rounded px-4 py-2 w-full"

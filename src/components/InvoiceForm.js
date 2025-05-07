@@ -19,7 +19,7 @@ const InvoiceForm = () => {
   const [billing_phone_number, setBilling_Phone_Number] = useState("");
   const [billing_address, setBilling_Address] = useState("");
   const [billing_gst_number, setBilling_Gst_Number] = useState("");
-  const [items, setItems] = useState([{ name: "", price: "", quantity: "" , tax: "", hsn: "" }]);
+  const [items, setItems] = useState([{ name: "", price: "", quantity: "" , gst: "", hsn: "" }]);
   const [invoiceData, setInvoiceData] = useState(null);
   const [invoice_number , setInvoice_Number] = useState("");
   const [product_list , setProduct_List] = useState("");
@@ -28,7 +28,7 @@ const InvoiceForm = () => {
 
   // Add new item
   const handleAddItem = () => {
-    setItems([...items, { name: "", price: "", quantity: "", tax: "", hsn: "" }]);
+    setItems([...items, { name: "", price: "", quantity: "", gst: "", hsn: "" }]);
   };
 
   // Remove an item
@@ -42,11 +42,11 @@ const InvoiceForm = () => {
     const newItems = [...items];
     newItems[index][field] = value;
   
-    // If the field is "name", auto-set the tax and hsn values
+    // If the field is "name", auto-set the gst and hsn values
     if (field === "name") {
       const selectedProduct = product_list.find(product => product.name === value);
       if (selectedProduct) {
-        newItems[index].tax = selectedProduct.tax; // Set tax from product_list
+        newItems[index].gst = selectedProduct.gst; // Set gst from product_list
         newItems[index].hsn = selectedProduct.hsn; // Set HSN from product_list
       }
     }
