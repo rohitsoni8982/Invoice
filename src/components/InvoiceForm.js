@@ -26,6 +26,29 @@ const InvoiceForm = () => {
   const [error, setError] = useState('');
   
 
+  const handleInvoiceToDateChange = (e) => {
+    const dateString = e.target.value; // YYYY-MM-DD
+    if (dateString) {
+      const [year, month, day] = dateString.split('-');
+      const formatted = `${day}-${month}-${year}`;
+      setInvoice_To_Date(formatted); // Store DD-MM-YYYY
+    } else {
+      setInvoice_To_Date('');
+    }
+  };
+  
+  const handleInvoiceFromDateChange = (e) => {
+    const dateString = e.target.value; // YYYY-MM-DD
+    if (dateString) {
+      const [year, month, day] = dateString.split('-');
+      const formatted = `${day}-${month}-${year}`;
+      setInvoice_From_Date(formatted); // Store DD-MM-YYYY
+    } else {
+        setInvoice_From_Date('');
+    }
+  };
+
+
   // Add new item
   const handleAddItem = () => {
     setItems([...items, { name: "", price: "", quantity: "", gst: "", hsn: "" }]);
@@ -155,14 +178,14 @@ const InvoiceForm = () => {
       billing_gst_number,
       items,
     };
-    axios.post('https://invoicebackend-rwos.onrender.com/add_card', invoiceDatasend)
-      .then(response => {
-        console.log('Invoice saved:', response.data);
-        // You can show a success message or redirect here
-      })
-      .catch(error => {
-        console.error('Error saving invoice:', error);
-      });
+    // axios.post('https://invoicebackend-rwos.onrender.com/add_card', invoiceDatasend)
+    //   .then(response => {
+    //     console.log('Invoice saved:', response.data);
+    //     // You can show a success message or redirect here
+    //   })
+    //   .catch(error => {
+    //     console.error('Error saving invoice:', error);
+    //   });
   };
 
   return (
@@ -180,15 +203,15 @@ const InvoiceForm = () => {
         <div className="grid grid-cols-2 gap-6">
           <input
             type="date"
-            value={invoice_to_date}
-            onChange={(e) => setInvoice_To_Date(e.target.value)}
+            // value={invoice_to_date}
+            onChange={handleInvoiceToDateChange}
             className="p-3 border rounded-md w-full"
             required
           />
           <input
             type="date"
-            value={invoice_from_date}
-            onChange={(e) => setInvoice_From_Date(e.target.value)}
+            // value={invoice_from_date}
+            onChange={handleInvoiceFromDateChange}
             className="p-3 border rounded-md w-full"
             required
           />

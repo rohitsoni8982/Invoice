@@ -59,6 +59,14 @@ const Header = ({ toggleMenu, menuOpen }) => {
             >
               Product List
             </NavLink></li>
+            <li><NavLink
+              to="/credit_note"
+              className={({ isActive }) =>
+                isActive ? "text-[#34b7a7] font-bold" : "text-Black"
+              }
+            >
+              Credit Note
+            </NavLink></li>
           </ul>
         </nav>
 
@@ -80,6 +88,7 @@ const Header = ({ toggleMenu, menuOpen }) => {
           <a href="/invoice_list" className="py-2">Invoice List</a>
           <a href="/product" className="py-2">Product</a>
           <a href="/product_list" className="py-2">Product List</a>
+          <a href="/credit_note" className="py-2">Credit Note</a>
         </div>
       )}
     </header>
