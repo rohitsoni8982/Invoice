@@ -2,7 +2,6 @@ import React from 'react';
 import { Page, Text, View, Document, StyleSheet, Image } from '@react-pdf/renderer';
 import logo from '../components/image.png'
 import numWords from "num-words";
-
 // Styles for PDF layout
 const styles = StyleSheet.create({
   page: {
@@ -240,17 +239,6 @@ const InvoicePDF = ({ invoiceData }) => {
   let totalSGST = 0;
   let totalIGST = 0;
   let totaltaxableamount = 0;
-
-  // function formatCurrencyInWords(amount) {
-  //   if (amount == null || isNaN(amount)) return 'Invalid Amount';
-  
-  //   const words = numWords(amount); // Make sure amount is a number
-  //   const capitalized = words
-  //     .split(' ')
-  //     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-  //     .join(' ');
-  //   return `${capitalized} Rupees Only`;
-  // }
 
   return (
     <Document>

@@ -178,14 +178,14 @@ const InvoiceForm = () => {
       billing_gst_number,
       items,
     };
-    // axios.post('https://invoicebackend-rwos.onrender.com/add_card', invoiceDatasend)
-    //   .then(response => {
-    //     console.log('Invoice saved:', response.data);
-    //     // You can show a success message or redirect here
-    //   })
-    //   .catch(error => {
-    //     console.error('Error saving invoice:', error);
-    //   });
+    axios.post('https://invoicebackend-rwos.onrender.com/add_card', invoiceDatasend)
+      .then(response => {
+        console.log('Invoice saved:', response.data);
+        // You can show a success message or redirect here
+      })
+      .catch(error => {
+        console.error('Error saving invoice:', error);
+      });
   };
 
   return (

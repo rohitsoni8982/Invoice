@@ -73,8 +73,7 @@ const CreditNote = () => {
   };
 
   useEffect(() => {
-    axios.get('http://127.0.0.1:8000/last_credit') // Replace with your API URL
-    // axios.get('https://invoicebackend-rwos.onrender.com/last_credit') // Replace with your API URL
+    axios.get('https://invoicebackend-rwos.onrender.com/last_credit') // Replace with your API URL
       .then(response => {
         const data = response.data;
 
@@ -108,7 +107,7 @@ const CreditNote = () => {
       credit_amount,
       description,
     };
-    axios.post('http://127.0.0.1:8000/credit_note', creditDatasend)
+    axios.post('https://invoicebackend-rwos.onrender.com/credit_note', creditDatasend)
       .then(response => {
         console.log('Credit saved:', response.data);
         // You can show a success message or redirect here

@@ -35,6 +35,16 @@ const Header = ({ toggleMenu, menuOpen }) => {
             </li>
             <li>
               <NavLink
+                to="/seller_detail"
+                className={({ isActive }) =>
+                  isActive ? "text-[#34b7a7] font-bold" : "text-Black"
+                }
+              >
+                Seller Detail
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
                 to="/invoice_list"
                 className={({ isActive }) =>
                   isActive ? "text-[#34b7a7] font-bold" : "text-Black"
@@ -85,6 +95,7 @@ const Header = ({ toggleMenu, menuOpen }) => {
       {menuOpen && (
         <div className="mobile-menu flex flex-col md:hidden bg-gray-100 p-4">
           <a href="/" className="py-2">Invoice Form</a>
+          <a href="/seller_detail" className="py-2">Seller Detail</a>
           <a href="/invoice_list" className="py-2">Invoice List</a>
           <a href="/product" className="py-2">Product</a>
           <a href="/product_list" className="py-2">Product List</a>
