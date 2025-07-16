@@ -7,18 +7,30 @@ const SellerForm = () => {
   const [billing_phone_number, setBilling_Phone_Number] = useState("");
   const [billing_address, setBilling_Address] = useState("");
   const [billing_gst_number, setBilling_Gst_Number] = useState("");
+  const [billing_state_code, setBilling_State_Code] = useState(""); // New state for state code
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState(""); // Add this line for success message
 
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevent page reload
 
+    // Billing name: only letters and spaces
     if (!billing_name) {
       setError("Billing name is required.");
       return;
     }
+    if (!/^[A-Za-z ]+$/.test(billing_name)) {
+      setError("Billing name must contain only letters and spaces.");
+      return;
+    }
 
+    // Phone number: exactly 10 digits, only numbers
     if (!billing_phone_number) {
       setError("Billing phone number is required.");
+      return;
+    }
+    if (!/^\d{10}$/.test(billing_phone_number)) {
+      setError("Billing phone number must be exactly 10 digits.");
       return;
     }
 
@@ -32,23 +44,48 @@ const SellerForm = () => {
       return;
     }
 
+    // State code: only numbers
+    if (!billing_state_code) {
+      setError("Billing state code is required.");
+      return;
+    }
+    if (!/^\d+$/.test(billing_state_code)) {
+      setError("Billing state code must be a number.");
+      return;
+    }
+
     setError(""); // Clear error if all fields are valid
+    setSuccess(""); // Clear previous success message
 
     const invoiceDatasend = {
       billing_name,
       billing_phone_number,
       billing_address,
       billing_gst_number,
+      billing_state_code, // Add state code to API payload
     };
 
-    // Send data to the backend (uncomment when backend is ready)
-    // axios.post('https://invoicebackend-rwos.onrender.com/add_card', invoiceDatasend)
-    //   .then(response => {
-    //     console.log('Invoice saved:', response.data);
-    //   })
-    //   .catch(error => {
-    //     console.error('Error saving invoice:', error);
-    //   });
+    // Make the API call to store client data
+    axios.post('http://127.0.0.1:8000/client_details', invoiceDatasend)
+    // axios.post('https://invoicebackend-rwos.onrender.com/client_details', invoiceDatasend)
+      .then(response => {
+        if (response.data && response.data === "successfully data stored") {
+          setSuccess("Client data stored successfully!");
+          // Optionally, clear the form fields:
+          setBilling_Name("");
+          setBilling_Phone_Number("");
+          setBilling_Address("");
+          setBilling_Gst_Number("");
+          setBilling_State_Code(""); // Clear state code
+        } else if (response.data && response.data.error) {
+          setError(response.data.error);
+        } else {
+          setError("Unexpected response from server.");
+        }
+      })
+      .catch(error => {
+        setError("Error saving client data: " + (error.response?.data?.error || error.message));
+      });
   };
 
   return (
@@ -69,7 +106,7 @@ const SellerForm = () => {
               type="text"
               placeholder="Bill To Name"
               value={billing_name}
-              onChange={(e) => setBilling_Name(e.target.value)}
+              onChange={(e) => setBilling_Name(e.target.value.toUpperCase())}
               className="p-3 border rounded-md w-full"
               required
             />
@@ -77,7 +114,12 @@ const SellerForm = () => {
               type="tel"
               placeholder="Bill To Mobile"
               value={billing_phone_number}
-              onChange={(e) => setBilling_Phone_Number(e.target.value)}
+              onChange={(e) => {
+                // Only allow numbers, then uppercase (for consistency, though numbers are unaffected)
+                const val = e.target.value.replace(/[^\d]/g, "").toUpperCase();
+                setBilling_Phone_Number(val);
+              }}
+              maxLength={10}
               className="p-3 border rounded-md w-full"
               required
             />
@@ -85,7 +127,7 @@ const SellerForm = () => {
               type="text"
               placeholder="Shipping Address"
               value={billing_address}
-              onChange={(e) => setBilling_Address(e.target.value)}
+              onChange={(e) => setBilling_Address(e.target.value.toUpperCase())}
               className="p-3 border rounded-md w-full"
               required
             />
@@ -93,7 +135,19 @@ const SellerForm = () => {
               type="text"
               placeholder="GST Number"
               value={billing_gst_number}
-              onChange={(e) => setBilling_Gst_Number(e.target.value)}
+              onChange={(e) => setBilling_Gst_Number(e.target.value.toUpperCase())}
+              className="p-3 border rounded-md w-full"
+              required
+            />
+            <input
+              type="text"
+              placeholder="State Code"
+              value={billing_state_code}
+              onChange={(e) => {
+                // Only allow numbers, then uppercase (for consistency, though numbers are unaffected)
+                const val = e.target.value.replace(/[^\d]/g, "").toUpperCase();
+                setBilling_State_Code(val);
+              }}
               className="p-3 border rounded-md w-full"
               required
             />
@@ -102,6 +156,9 @@ const SellerForm = () => {
 
         {error && (
           <div style={{ color: "red", marginBottom: "10px" }}>{error}</div>
+        )}
+        {success && (
+          <div style={{ color: "green", marginBottom: "10px" }}>{success}</div>
         )}
 
         <button

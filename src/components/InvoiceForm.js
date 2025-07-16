@@ -99,7 +99,8 @@ const InvoiceForm = () => {
   };
   
     useEffect(() => {
-      axios.get('https://invoicebackend-rwos.onrender.com/last_invoice') // Replace with your API URL
+      axios.get('http://127.0.0.1:8000/last_invoice') // Replace with your API URL
+      // axios.get('https://invoicebackend-rwos.onrender.com/last_invoice') // Replace with your API URL
         .then(response => {
           const data = response.data;
   
@@ -119,7 +120,8 @@ const InvoiceForm = () => {
     
 
   useEffect(() => {
-    axios.get('https://invoicebackend-rwos.onrender.com/product_list') // Replace with your API URL
+    axios.get('http://127.0.0.1:8000/product_list') // Replace with your API URL
+    // axios.get('https://invoicebackend-rwos.onrender.com/product_list') // Replace with your API URL
       .then(response => setProduct_List(response.data)) // Assuming response.data is a list of products
       .catch(error => console.error('Error fetching product list:', error));
   }, []);
@@ -178,7 +180,8 @@ const InvoiceForm = () => {
       billing_gst_number,
       items,
     };
-    axios.post('https://invoicebackend-rwos.onrender.com/add_card', invoiceDatasend)
+    axios.post('http://127.0.0.1:8000/add_card', invoiceDatasend)
+    // axios.post('https://invoicebackend-rwos.onrender.com/add_card', invoiceDatasend)
       .then(response => {
         console.log('Invoice saved:', response.data);
         // You can show a success message or redirect here

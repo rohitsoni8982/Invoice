@@ -47,61 +47,56 @@ const ProductForm = () => {
     return (
         <div>
             <NavePage />
-            <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-8 mt-10">
-                <h2 className="text-2xl font-bold mb-4">Product Details Form</h2>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                        <label className="block font-medium">Product Name</label>
+            <form
+                onSubmit={handleSubmit}
+                className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-8 mt-10"
+            >
+                <div className="mb-8">
+                    <h3 className="text-xl font-semibold text-gray-700 mb-4">
+                        Product Info
+                    </h3>
+                    <div className="grid grid-cols-2 gap-6">
                         <input
                             type="text"
                             name="name"
                             value={productDetails.name}
                             onChange={handleChange}
-                            className="border border-gray-300 rounded px-4 py-2 w-full"
-                            placeholder="Enter product name"
+                            className="p-3 border rounded-md w-full"
+                            placeholder="Product Name"
                         />
-                    </div>
-                    <div>
-                        <label className="block font-medium">HSN Number</label>
                         <input
                             type="text"
                             name="hsn"
                             value={productDetails.hsn}
                             onChange={handleChange}
-                            className="border border-gray-300 rounded px-4 py-2 w-full"
-                            placeholder="Enter HSN number"
+                            className="p-3 border rounded-md w-full"
+                            placeholder="HSN Number"
                         />
-                    </div>
-                    <div>
-                        <label className="block font-medium">CGST Rate (%)</label>
                         <input
                             type="number"
                             name="gst"
                             value={productDetails.gst}
                             onChange={handleChange}
-                            className="border border-gray-300 rounded px-4 py-2 w-full"
-                            placeholder="Enter GST"
+                            className="p-3 border rounded-md w-full"
+                            placeholder="CGST Rate (%)"
                         />
-                    </div>
-                    <div>
-                        <label className="block font-medium">Taxable Value</label>
                         <input
                             type="number"
                             name="taxable_value"
                             value={productDetails.taxable_value}
                             onChange={handleChange}
-                            className="border border-gray-300 rounded px-4 py-2 w-full"
-                            placeholder="Enter taxable value"
+                            className="p-3 border rounded-md w-full"
+                            placeholder="Taxable Value"
                         />
                     </div>
-                    <button
-                        type="submit"
-                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                    >
-                        Submit
-                    </button>
-                </form>
-            </div>
+                </div>
+                <button
+                    type="submit"
+                    className="w-full bg-green-500 hover:bg-green-600 text-white py-3 px-6 rounded-md"
+                >
+                    Save
+                </button>
+            </form>
         </div>
     );
 };

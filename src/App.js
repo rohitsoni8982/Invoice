@@ -7,8 +7,9 @@ import InvoiceList from "./components/Invoice_list";
 import ProductForm from "./components/product";
 import ProductList from "./components/product_list";
 import InvoiceDetails from "./components/InvoiceDetails";
-import CreditNote from "./components/credit_note"
+import CreditNote from "./components/credit_note";
 import SellerForm from "./components/seller";
+import SellerList from "./components/seller_list";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path='/product_list' element={<ProductList />} />
           <Route path='/credit_note' element={<CreditNote />} />
           <Route path='/seller_detail' element={<SellerForm />} />
+          <Route path='/seller_list' element={<SellerList />} />
         </Routes>
       </BrowserRouter>
     </div>

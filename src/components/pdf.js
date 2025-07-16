@@ -2,6 +2,7 @@ import React from 'react';
 import { Page, Text, View, Document, StyleSheet, Image } from '@react-pdf/renderer';
 import logo from '../components/image.png'
 import numWords from "num-words";
+import { toWords } from 'number-to-words';
 // Styles for PDF layout
 const styles = StyleSheet.create({
   page: {
@@ -224,11 +225,12 @@ const styles = StyleSheet.create({
 });
 
 const InvoicePDF = ({ invoiceData }) => {
-  const totalAmount = invoiceData.items.reduce((acc, item) => {
+  // Ensure items is always an array
+  const items = Array.isArray(invoiceData.items) ? invoiceData.items : [];
+  const totalAmount = items.reduce((acc, item) => {
     const price = parseFloat(item.price) || 0;
     const quantity = parseInt(item.quantity, 10) || 0;
     const tax = parseFloat(item.gst) || 0;
-
     const amount = (price * quantity) + (price * quantity * (tax / 100));
     return acc + amount;
   }, 0).toFixed(2);
@@ -448,8 +450,14 @@ const InvoicePDF = ({ invoiceData }) => {
         {/* Total Amount in Words */}
         <View style={styles.totalAmountSection}>
           <Text style={styles.text}>Total Amount (in words)</Text>
-          <Text style={styles.text}>{numWords(totalAmount)}</Text>
-          {/* <Text style={styles.text}>{formatCurrencyInWords(totalAmount)}</Text> */}
+          <Text style={styles.text}>{(() => {
+            try {
+              const n = Number(totalAmount);
+              return Number.isFinite(n) && totalAmount !== null && totalAmount !== undefined ? toWords(n) : '-';
+            } catch (e) {
+              return '-';
+            }
+          })()}</Text>
         </View>
 
         {/* Bank Details */}

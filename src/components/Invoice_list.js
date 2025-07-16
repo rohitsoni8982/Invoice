@@ -3,17 +3,21 @@ import { DataGrid } from '@mui/x-data-grid';
 import { Box } from '@mui/material';
 import NavePage from "./nav";
 import { useNavigate } from 'react-router-dom';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import InvoicePDF from './pdf';
 
 const InvoiceList = () => {
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState('Loading...');
+  const [activePDFRow, setActivePDFRow] = useState(null); // Track which row is preparing PDF
   const navigate = useNavigate();
 
   // Fetch data (replace with your API endpoint or data source)
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
-        const response = await fetch(' https://invoicebackend-rwos.onrender.com/invoice_list'); // Replace with your API endpoint
+        const response = await fetch(' http://127.0.0.1:8000/invoice_list'); // Replace with your API endpoint
+        // const response = await fetch(' https://invoicebackend-rwos.onrender.com/invoice_list'); // Replace with your API endpoint
         const data = await response.json();
         setInvoices(data);
         setLoading('');
@@ -41,6 +45,16 @@ const InvoiceList = () => {
     // You can integrate your PDF generation logic here
   };
 
+  const COMPANY_INFO = {
+    gstNumber: "23HNNPS0665E1ZR",
+    companyName: "MG Traders",
+    companyAddress: "76, Ambika Puri Extension, Indore, MP",
+    companyState: "Madhya Pradesh",
+    companyCity: "Indore",
+    companyPinCode: "452005",
+    companyMobile: "9981230516",
+  };
+
   // Define columns for the grid
   const columns = [
     {
@@ -55,16 +69,28 @@ const InvoiceList = () => {
           >
             View Details
           </button>
-          <button
-            onClick={() => handleDownloadPDF(params.row)}
-            className="text-green rounded hover:bg-green-600"
-          >
-            Download PDF
-          </button>
+          {activePDFRow === params.row.invoice_number ? (
+            <PDFDownloadLink
+              document={<InvoicePDF invoiceData={{ ...params.row, ...COMPANY_INFO }} />}
+              fileName={`invoice_${params.row.invoice_number}.pdf`}
+              style={{ color: 'green', borderRadius: '4px', padding: '4px 8px', background: 'none', border: 'none', cursor: 'pointer' }}
+              onClick={() => setActivePDFRow(null)} // Optionally reset after click
+            >
+              {({ loading }) => (loading ? 'Preparing PDF...' : 'Download PDF')}
+            </PDFDownloadLink>
+          ) : (
+            <button
+              onClick={() => setActivePDFRow(params.row.invoice_number)}
+              className="text-green rounded hover:bg-green-600"
+            >
+              Download PDF
+            </button>
+          )}
         </div>
       ),
     },
     { field: 'invoice_number', headerName: 'Invoice Number', width: 200 },
+    { field: 'billing_gst_number', headerName: 'GST Number', width: 200 },
     { field: 'billing_name', headerName: 'Billing Name', width: 200 },
     { field: 'billing_address', headerName: 'Billing Address', width: 300 },
     { field: 'billing_phone_number', headerName: 'Billing Phone', width: 150 },
@@ -100,7 +126,6 @@ const InvoiceList = () => {
             columns={columns}
             pageSize={5}
             rowsPerPageOptions={[5, 10, 20]}
-            checkboxSelection
             getRowId={(row) => row.invoice_number} // Use a unique field as the row ID
           />
         </Box>
