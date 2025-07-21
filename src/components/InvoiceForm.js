@@ -19,6 +19,7 @@ const InvoiceForm = () => {
   const [billing_phone_number, setBilling_Phone_Number] = useState("");
   const [billing_address, setBilling_Address] = useState("");
   const [billing_gst_number, setBilling_Gst_Number] = useState("");
+  const [biller_list, setBiller_List] = useState([]);
   const [items, setItems] = useState([{ name: "", price: "", quantity: "" , gst: "", hsn: "" }]);
   const [invoiceData, setInvoiceData] = useState(null);
   const [invoice_number , setInvoice_Number] = useState("");
@@ -126,6 +127,13 @@ const InvoiceForm = () => {
       .catch(error => console.error('Error fetching product list:', error));
   }, []);
 
+  // Fetch biller list for dropdown
+  useEffect(() => {
+    axios.get('http://127.0.0.1:8000/get_client_list')
+      .then(response => setBiller_List(response.data))
+      .catch(error => console.error('Error fetching biller list:', error));
+  }, []);
+
   const handleGenerateInvoice = () => {
     
     if (!invoice_number) {
@@ -225,37 +233,56 @@ const InvoiceForm = () => {
       <div className="mb-8">
         <h3 className="text-xl font-semibold text-gray-700 mb-4">Billing & Shipping Info</h3>
         <div className="grid grid-cols-2 gap-6">
-          <input
-            type="text"
-            placeholder="Bill To Name"
+          <select
             value={billing_name}
-            onChange={(e) => setBilling_Name(e.target.value)}
+            onChange={e => {
+              const selectedName = e.target.value;
+              setBilling_Name(selectedName);
+              const selectedBiller = biller_list.find(b => b.billing_name === selectedName);
+              if (selectedBiller) {
+                setBilling_Phone_Number(selectedBiller.billing_phone_number);
+                setBilling_Address(selectedBiller.billing_address);
+                setBilling_Gst_Number(selectedBiller.billing_gst_number);
+              } else {
+                setBilling_Phone_Number("");
+                setBilling_Address("");
+                setBilling_Gst_Number("");
+              }
+            }}
             className="p-3 border rounded-md w-full"
             required
-          />
+          >
+            <option value="">Select Biller Name</option>
+            {biller_list.map((biller, idx) => (
+              <option key={idx} value={biller.billing_name}>{biller.billing_name}</option>
+            ))}
+          </select>
           <input
             type="tel"
             placeholder="Bill To Mobile"
             value={billing_phone_number}
-            onChange={(e) => setBilling_Phone_Number(e.target.value)}
+            onChange={e => setBilling_Phone_Number(e.target.value)}
             className="p-3 border rounded-md w-full"
             required
+            readOnly
           />
           <input
             type="text"
             placeholder="Shipping Address"
             value={billing_address}
-            onChange={(e) => setBilling_Address(e.target.value)}
+            onChange={e => setBilling_Address(e.target.value)}
             className="p-3 border rounded-md w-full"
             required
+            readOnly
           />
           <input
             type="text"
             placeholder="GST Number"
             value={billing_gst_number}
-            onChange={(e) => setBilling_Gst_Number(e.target.value)}
+            onChange={e => setBilling_Gst_Number(e.target.value)}
             className="p-3 border rounded-md w-full"
             required
+            readOnly
           />
         </div>
       </div>

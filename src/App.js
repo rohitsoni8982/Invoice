@@ -10,6 +10,7 @@ import InvoiceDetails from "./components/InvoiceDetails";
 import CreditNote from "./components/credit_note";
 import SellerForm from "./components/seller";
 import SellerList from "./components/seller_list";
+import ClientInvoiceView from "./components/ClientInvoiceView";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path='/credit_note' element={<CreditNote />} />
           <Route path='/seller_detail' element={<SellerForm />} />
           <Route path='/seller_list' element={<SellerList />} />
+          <Route path='/client_invoice_view' element={<ClientInvoiceView />} />
         </Routes>
       </BrowserRouter>
     </div>
