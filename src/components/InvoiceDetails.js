@@ -13,7 +13,7 @@ const InvoiceDetails = () => {
     const fetchInvoice = async () => {
       try {
         // Replace with your API endpoint to fetch invoice details by invoice number
-        const response = await fetch(`https://your-api-endpoint.com/invoices/${invoiceNumber}`);
+        const response = await fetch(`https://invoicebackend-rwos.onrender.com/invoices/${invoiceNumber}`);
         const data = await response.json();
         setInvoice(data); // Set the fetched invoice data
         setLoading(false); // Stop loading

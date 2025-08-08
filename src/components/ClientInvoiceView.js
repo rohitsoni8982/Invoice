@@ -17,7 +17,8 @@ const ClientInvoiceView = () => {
 
   // Fetch all clients on mount
   useEffect(() => {
-    axios.get('http://127.0.0.1:8000/get_client_list')
+    axios.get('https://invoicebackend-rwos.onrender.com/get_client_list')
+    // axios.get('http://127.0.0.1:8000/get_client_list')
       .then(res => {
         setClients(res.data);
         setLoadingClients(false);
@@ -32,7 +33,8 @@ const ClientInvoiceView = () => {
   useEffect(() => {
     if (selectedClientGst) {
       setLoadingInvoices(true);
-      axios.post('http://127.0.0.1:8000/get_client_invoice', { gst_number: selectedClientGst })
+      axios.post('https://invoicebackend-rwos.onrender.com/get_client_invoice', { gst_number: selectedClientGst })
+      // axios.post('http://127.0.0.1:8000/get_client_invoice', { gst_number: selectedClientGst })
         .then(res => {
           setInvoices(res.data);
           setLoadingInvoices(false);
@@ -80,7 +82,8 @@ const ClientInvoiceView = () => {
   // Update remaining amount handler
   const handleUpdateAmount = () => {
     if (!invoiceDetails || !editRemainingAmount) return;
-    axios.post('http://127.0.0.1:8000/update_remaining_amount', {
+    axios.post('https://invoicebackend-rwos.onrender.com/update_remaining_amount', {
+    // axios.post('http://127.0.0.1:8000/update_remaining_amount', {
       invoice_number: invoiceDetails.invoice_number,
       remaining_amount: editRemainingAmount
     })

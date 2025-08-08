@@ -20,8 +20,8 @@ const ProductForm = () => {
         console.log('Product Details:', productDetails);
 
         try {
-            const response = await axios.post('http://127.0.0.1:8000/product', productDetails
-            // const response = await axios.post('https://invoicebackend-rwos.onrender.com/products', productDetails
+            // const response = await axios.post('http://127.0.0.1:8000/product', productDetails
+            const response = await axios.post('https://invoicebackend-rwos.onrender.com/products', productDetails
             );
 
             if (response.status === 200 || response.status === 201) {

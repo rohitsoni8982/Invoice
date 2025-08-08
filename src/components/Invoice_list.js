@@ -16,8 +16,8 @@ const InvoiceList = () => {
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
-        const response = await fetch(' http://127.0.0.1:8000/invoice_list'); // Replace with your API endpoint
-        // const response = await fetch(' https://invoicebackend-rwos.onrender.com/invoice_list'); // Replace with your API endpoint
+        // const response = await fetch(' http://127.0.0.1:8000/invoice_list'); // Replace with your API endpoint
+        const response = await fetch(' https://invoicebackend-rwos.onrender.com/invoice_list'); // Replace with your API endpoint
         const data = await response.json();
         setInvoices(data);
         setLoading('');

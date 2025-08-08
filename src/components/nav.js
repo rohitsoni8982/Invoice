@@ -84,6 +84,17 @@ const Header = ({ toggleMenu, menuOpen, sellerSubMenuOpen, toggleSellerSubMenu, 
                       Seller List
                     </NavLink>
                   </li>
+                  <li>
+                    <NavLink
+                      to="/client_invoice_view"
+                      className={({ isActive }) =>
+                        (isActive ? "text-[#34b7a7] font-bold" : "text-Black") + " block px-4 py-2 hover:bg-gray-100"
+                      }
+                      onClick={toggleSellerSubMenu}
+                    >
+                      Seller Invoice View
+                    </NavLink>
+                  </li>
                 </ul>
               )}
             </li>
@@ -157,7 +168,15 @@ const Header = ({ toggleMenu, menuOpen, sellerSubMenuOpen, toggleSellerSubMenu, 
       {/* Mobile Menu */}
       {menuOpen && (
         <div className="mobile-menu flex flex-col md:hidden bg-gray-100 p-4">
-          <a href="/" className="py-2">Invoice Form</a>
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              (isActive ? "text-[#34b7a7] font-bold" : "text-Black") + " py-2"
+            }
+            onClick={toggleMenu}
+          >
+            Invoice Form
+          </NavLink>
           <button
             type="button"
             className="py-2 text-left w-full focus:outline-none"
@@ -167,11 +186,35 @@ const Header = ({ toggleMenu, menuOpen, sellerSubMenuOpen, toggleSellerSubMenu, 
           </button>
           {mobileSellerSubMenuOpen && (
             <div className="pl-4">
-              <a href="/seller_detail" className="py-2 block">Seller Detail</a>
-              <a href="/seller_list" className="py-2 block">Seller List</a>
+              <NavLink
+                to="/seller_detail"
+                className={({ isActive }) =>
+                  (isActive ? "text-[#34b7a7] font-bold" : "text-Black") + " py-2 block"
+                }
+                onClick={toggleMenu}
+              >
+                Seller Detail
+              </NavLink>
+              <NavLink
+                to="/seller_list"
+                className={({ isActive }) =>
+                  (isActive ? "text-[#34b7a7] font-bold" : "text-Black") + " py-2 block"
+                }
+                onClick={toggleMenu}
+              >
+                Seller List
+              </NavLink>
             </div>
           )}
-          <a href="/invoice_list" className="py-2">Invoice List</a>
+          <NavLink
+            to="/invoice_list"
+            className={({ isActive }) =>
+              (isActive ? "text-[#34b7a7] font-bold" : "text-Black") + " py-2"
+            }
+            onClick={toggleMenu}
+          >
+            Invoice List
+          </NavLink>
           <button
             type="button"
             className="py-2 text-left w-full focus:outline-none"
@@ -181,11 +224,35 @@ const Header = ({ toggleMenu, menuOpen, sellerSubMenuOpen, toggleSellerSubMenu, 
           </button>
           {mobileProductSubMenuOpen && (
             <div className="pl-4">
-              <a href="/product" className="py-2 block">Product</a>
-              <a href="/product_list" className="py-2 block">Product List</a>
+              <NavLink
+                to="/product"
+                className={({ isActive }) =>
+                  (isActive ? "text-[#34b7a7] font-bold" : "text-Black") + " py-2 block"
+                }
+                onClick={toggleMenu}
+              >
+                Product
+              </NavLink>
+              <NavLink
+                to="/product_list"
+                className={({ isActive }) =>
+                  (isActive ? "text-[#34b7a7] font-bold" : "text-Black") + " py-2 block"
+                }
+                onClick={toggleMenu}
+              >
+                Product List
+              </NavLink>
             </div>
           )}
-          <a href="/credit_note" className="py-2">Credit Note</a>
+          <NavLink
+            to="/credit_note"
+            className={({ isActive }) =>
+              (isActive ? "text-[#34b7a7] font-bold" : "text-Black") + " py-2"
+            }
+            onClick={toggleMenu}
+          >
+            Credit Note
+          </NavLink>
         </div>
       )}
     </header>

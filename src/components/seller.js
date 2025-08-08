@@ -66,8 +66,8 @@ const SellerForm = () => {
     };
 
     // Make the API call to store client data
-    axios.post('http://127.0.0.1:8000/client_details', invoiceDatasend)
-    // axios.post('https://invoicebackend-rwos.onrender.com/client_details', invoiceDatasend)
+    // axios.post('http://127.0.0.1:8000/client_details', invoiceDatasend)
+    axios.post('https://invoicebackend-rwos.onrender.com/client_details', invoiceDatasend)
       .then(response => {
         if (response.data && response.data === "successfully data stored") {
           setSuccess("Client data stored successfully!");

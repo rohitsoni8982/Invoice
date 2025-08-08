@@ -10,7 +10,8 @@ const SellerList = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    axios.get('http://127.0.0.1:8000/get_client_list')
+    axios.get('https://invoicebackend-rwos.onrender.com/get_client_list')
+    // axios.get('http://127.0.0.1:8000/get_client_list')
       .then(response => {
         setSellers(response.data);
         setLoading(false);
